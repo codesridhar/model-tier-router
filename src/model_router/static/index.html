@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Model Routing Workbench</title>
+  <style>
+    :root {
+      --ink: #181915;
+      --paper: #f0eddf;
+      --paper-deep: #ded8c5;
+      --line: #a49e8a;
+      --amber: #e9692c;
+      --mint: #9fd9bd;
+      --blue: #79a8ce;
+      --red: #d94a3d;
+      --muted: #666759;
+      --shadow: 8px 8px 0 #181915;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(24, 25, 21, .055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 25, 21, .055) 1px, transparent 1px),
+        var(--paper);
+      background-size: 24px 24px;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .16;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.24'/%3E%3C/svg%3E");
+    }
+
+    .shell { width: min(1380px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 52px; }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      border-top: 9px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+      padding: 20px 0 16px;
+      margin-bottom: 28px;
+      animation: enter .45s ease-out both;
+    }
+
+    .eyebrow, label, button, select, input, .mono, .badge, .reason {
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { font-size: clamp(42px, 7vw, 92px); line-height: .86; letter-spacing: -.055em; margin: 10px 0 0; max-width: 880px; }
+    .edition { text-align: right; font-size: 13px; line-height: 1.5; }
+
+    main { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(380px, .92fr); gap: 28px; align-items: start; }
+    .panel { background: rgba(240, 237, 223, .94); border: 2px solid var(--ink); box-shadow: var(--shadow); }
+    .panel-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 2px solid var(--ink); background: var(--paper-deep); }
+    .panel-head h2 { margin: 0; font-size: 18px; text-transform: uppercase; letter-spacing: .06em; }
+    .panel-body { padding: 20px; }
+
+    form { display: grid; gap: 18px; }
+    label { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+    textarea, select, input[type="number"] {
+      width: 100%; border: 1.5px solid var(--ink); border-radius: 0; background: #faf7ea; color: var(--ink);
+      padding: 12px; font: 16px/1.45 Georgia, serif; outline: none;
+    }
+    textarea:focus, select:focus, input:focus { box-shadow: 0 0 0 3px var(--mint); }
+    #query { min-height: 150px; resize: vertical; font-size: 18px; }
+    #context { min-height: 82px; resize: vertical; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .check-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .check-chip { position: relative; }
+    .check-chip input { position: absolute; opacity: 0; pointer-events: none; }
+    .check-chip span { display: block; border: 1.5px solid var(--ink); padding: 8px 11px; background: #faf7ea; font: 700 12px "Courier New", monospace; text-transform: uppercase; cursor: pointer; }
+    .check-chip input:checked + span { background: var(--ink); color: var(--paper); }
+    .check-chip input:focus-visible + span { outline: 3px solid var(--mint); outline-offset: 2px; }
+
+    button {
+      border: 2px solid var(--ink); background: var(--amber); color: var(--ink); padding: 14px 18px;
+      font-size: 14px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+      box-shadow: 4px 4px 0 var(--ink); transition: transform .12s, box-shadow .12s;
+    }
+    button:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+    button:active { transform: translate(4px, 4px); box-shadow: none; }
+    button:disabled { cursor: wait; opacity: .65; }
+
+    .result-panel { position: sticky; top: 18px; animation: enter .5s .08s ease-out both; }
+    .empty { padding: 54px 24px; color: var(--muted); text-align: center; }
+    .empty-mark { display: block; font-size: 64px; margin-bottom: 14px; }
+    .result { display: none; }
+    .result.visible { display: block; }
+    .tier-block { padding: 24px 20px 20px; border-bottom: 2px solid var(--ink); }
+    .tier-label { font: 700 11px "Courier New", monospace; text-transform: uppercase; letter-spacing: .13em; }
+    .tier { font-size: clamp(62px, 8vw, 112px); line-height: .8; letter-spacing: -.06em; margin: 12px 0 18px; text-transform: uppercase; }
+    .badge { display: inline-block; border: 1.5px solid var(--ink); padding: 5px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin: 0 5px 5px 0; background: var(--mint); }
+    .badge.error { background: var(--red); color: white; }
+
+    .meter-wrap { padding: 20px; border-bottom: 2px solid var(--ink); }
+    .meter-labels { display: flex; justify-content: space-between; font: 700 11px "Courier New", monospace; margin-bottom: 8px; }
+    .meter { height: 24px; display: grid; grid-template-columns: 2fr 3fr 4fr 4fr; border: 1.5px solid var(--ink); position: relative; }
+    .meter > span { border-right: 1px solid var(--ink); }
+    .meter > span:last-child { border: 0; }
+    .meter > span:nth-child(1) { background: #ddd9c8; }
+    .meter > span:nth-child(2) { background: var(--mint); }
+    .meter > span:nth-child(3) { background: var(--blue); }
+    .meter > span:nth-child(4) { background: var(--amber); }
+    .needle { position: absolute; top: -7px; width: 4px; height: 36px; background: var(--ink); transition: left .5s cubic-bezier(.2,.9,.3,1.2); }
+
+    .details { display: grid; grid-template-columns: 1fr 1fr; }
+    .detail { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+    .detail:nth-child(odd) { border-right: 1px solid var(--line); }
+    .detail small { display: block; color: var(--muted); font: 700 10px "Courier New", monospace; text-transform: uppercase; margin-bottom: 5px; }
+    .detail strong { font-size: 17px; word-break: break-word; }
+    .reasons { padding: 20px; }
+    .reasons h3 { margin: 0 0 12px; font-size: 15px; text-transform: uppercase; }
+    .reason { display: flex; gap: 9px; border-top: 1px solid var(--line); padding: 9px 0; font-size: 12px; }
+    .reason::before { content: "→"; color: var(--amber); font-weight: 900; }
+    .error-box { display: none; margin-top: 12px; border: 2px solid var(--red); padding: 12px; background: #f7d7ce; font-family: "Courier New", monospace; font-size: 13px; }
+
+    @keyframes enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      .result-panel { position: static; }
+      header { grid-template-columns: 1fr; }
+      .edition { text-align: left; }
+    }
+    @media (max-width: 560px) { .grid-2, .details { grid-template-columns: 1fr; } .detail:nth-child(odd) { border-right: 0; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <div class="eyebrow">Capability dispatch / local instrument</div>
+        <h1>Routing Workbench</h1>
+      </div>
+      <div class="edition mono">MODEL-TIER-ROUTER<br>POLICY 1.0 / TEST CONSOLE</div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="panel-head"><h2>01 / Query input</h2><span class="mono">POST /api/route</span></div>
+        <div class="panel-body">
+          <form id="route-form">
+            <div>
+              <label for="sample">Load a test scenario</label>
+              <select id="sample">
+                <option value="">Custom query</option>
+                <option value="fast">Fast / invoice extraction</option>
+                <option value="medium">Medium / technology comparison</option>
+                <option value="high" selected>High / distributed deadlock</option>
+                <option value="max">Max / critical migration</option>
+                <option value="vision">Constraint / vision escalation</option>
+                <option value="blocked">Constraint / no eligible audio model</option>
+              </select>
+            </div>
+            <div>
+              <label for="query">User query</label>
+              <textarea id="query" required>Investigate this deadlock across three services and identify the root cause</textarea>
+            </div>
+            <div>
+              <label for="context">Additional context (optional)</label>
+              <textarea id="context" placeholder="Conversation history, document text, code, or supporting context"></textarea>
+            </div>
+            <div class="grid-2">
+              <div>
+                <label for="task-type">Task type</label>
+                <select id="task-type">
+                  <option value="general">General</option><option value="classification">Classification</option>
+                  <option value="extraction">Extraction</option><option value="summarization">Summarization</option>
+                  <option value="writing">Writing</option><option value="coding" selected>Coding</option>
+                  <option value="analysis">Analysis</option><option value="math">Math</option>
+                </select>
+              </div>
+              <div>
+                <label for="risk">Cost of failure</label>
+                <select id="risk"><option value="low">Low</option><option value="standard" selected>Standard</option><option value="high">High</option><option value="critical">Critical</option></select>
+              </div>
+            </div>
+            <div>
+              <label>Allowed tiers</label>
+              <div class="check-row" id="tiers">
+                <label class="check-chip"><input type="checkbox" value="fast" checked><span>Fast</span></label>
+                <label class="check-chip"><input type="checkbox" value="medium" checked><span>Medium</span></label>
+                <label class="check-chip"><input type="checkbox" value="high" checked><span>High</span></label>
+                <label class="check-chip"><input type="checkbox" value="max" checked><span>Max</span></label>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <label for="capability">Required capability</label>
+                <select id="capability"><option value="">Text (default)</option><option value="vision">Vision</option><option value="audio">Audio</option></select>
+              </div>
+              <div>
+                <label for="context-window">Required context window</label>
+                <input id="context-window" type="number" min="0" max="1000000" step="1000" value="0">
+              </div>
+            </div>
+            <div>
+              <label for="override">Trusted tier override</label>
+              <select id="override"><option value="">Automatic routing</option><option value="fast">Fast</option><option value="medium">Medium</option><option value="high">High</option><option value="max">Max</option></select>
+            </div>
+            <button id="submit" type="submit">Evaluate query →</button>
+            <div class="error-box" id="error" role="alert"></div>
+          </form>
+        </div>
+      </section>
+
+      <aside class="panel result-panel" aria-live="polite">
+        <div class="panel-head"><h2>02 / Routing decision</h2><span class="mono" id="status-mark">READY</span></div>
+        <div class="empty" id="empty"><span class="empty-mark">◎</span>Submit a query to inspect its route.</div>
+        <div class="result" id="result">
+          <div class="tier-block">
+            <div class="tier-label">Selected capability tier</div>
+            <div class="tier" id="tier">—</div>
+            <span class="badge" id="status">—</span><span class="badge" id="source">—</span>
+          </div>
+          <div class="meter-wrap">
+            <div class="meter-labels"><span id="score-label">Rule score —</span><span>FAST · MEDIUM · HIGH · MAX</span></div>
+            <div class="meter"><span></span><span></span><span></span><span></span><i class="needle" id="needle"></i></div>
+          </div>
+          <div class="details">
+            <div class="detail"><small>Model ID</small><strong id="model">—</strong></div>
+            <div class="detail"><small>Policy</small><strong id="policy">—</strong></div>
+            <div class="detail"><small>Confidence</small><strong id="confidence">—</strong></div>
+            <div class="detail"><small>Thresholds</small><strong id="thresholds">—</strong></div>
+          </div>
+          <div class="reasons"><h3>Detected signals</h3><div id="reasons"></div></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const form = document.querySelector('#route-form');
+    const errorBox = document.querySelector('#error');
+    const submit = document.querySelector('#submit');
+    const labels = {
+      BOUNDED_SIMPLE_TASK: 'Bounded, simple operation', REASONING_TASK_TYPE: 'Task type requires reasoning',
+      MULTI_STEP_REASONING: 'Reasoning language detected', SPECIALIZED_COMPLEXITY: 'Specialized complexity detected',
+      MULTI_COMPONENT_ANALYSIS: 'Multiple components interact', MULTIPLE_REQUIREMENTS: 'Multiple requirements detected',
+      CODE_CONTEXT: 'Code context included', LARGE_INPUT: 'Large input', VERY_LARGE_INPUT: 'Very large input',
+      HIGH_COST_OF_FAILURE: 'Elevated cost of failure', GENERAL_REQUEST: 'General request with no complexity triggers',
+      VISION_INPUT_DETECTED: 'Vision input inferred from the query', AUDIO_INPUT_DETECTED: 'Audio input inferred from the query',
+      CALLER_OVERRIDE: 'Trusted caller override', CLASSIFIER_FAILURE: 'Classifier failed; fallback applied',
+      NO_ELIGIBLE_MODEL: 'No configured model satisfies every constraint'
+    };
+    const samples = {
+      fast: {query: 'Extract the invoice date', task: 'extraction', risk: 'standard'},
+      medium: {query: 'Compare OAuth and API keys for a small internal tool', task: 'analysis', risk: 'standard'},
+      high: {query: 'Investigate this deadlock across three services and identify the root cause', task: 'coding', risk: 'standard'},
+      max: {query: 'Design an architecture migration across multiple distributed systems', task: 'analysis', risk: 'critical'},
+      vision: {query: 'Describe the attached image', task: 'general', risk: 'standard', capability: 'vision'},
+      blocked: {query: 'Transcribe this recording', task: 'general', risk: 'standard', capability: 'audio', allowed: ['fast', 'medium', 'high']}
+    };
+
+    document.querySelector('#sample').addEventListener('change', (event) => {
+      const sample = samples[event.target.value];
+      if (!sample) return;
+      document.querySelector('#query').value = sample.query;
+      document.querySelector('#task-type').value = sample.task;
+      document.querySelector('#risk').value = sample.risk;
+      document.querySelector('#capability').value = sample.capability || '';
+      const allowed = sample.allowed || ['fast', 'medium', 'high', 'max'];
+      document.querySelectorAll('#tiers input').forEach(input => { input.checked = allowed.includes(input.value); });
+      document.querySelector('#context-window').value = 0;
+      document.querySelector('#override').value = '';
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorBox.style.display = 'none';
+      submit.disabled = true;
+      submit.textContent = 'Evaluating…';
+      const capability = document.querySelector('#capability').value;
+      const payload = {
+        query: document.querySelector('#query').value,
+        context: document.querySelector('#context').value,
+        task_type: document.querySelector('#task-type').value,
+        risk: document.querySelector('#risk').value,
+        allowed_tiers: [...document.querySelectorAll('#tiers input:checked')].map(el => el.value),
+        required_capabilities: capability ? [capability] : [],
+        required_context_window: Number(document.querySelector('#context-window').value || 0),
+        tier_override: document.querySelector('#override').value || null
+      };
+
+      try {
+        const response = await fetch('/api/route', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail?.[0]?.msg || 'The routing request failed.');
+        render(data);
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.style.display = 'block';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Evaluate query →';
+      }
+    });
+
+    function render(data) {
+      const d = data.decision;
+      document.querySelector('#empty').style.display = 'none';
+      document.querySelector('#result').classList.add('visible');
+      document.querySelector('#status-mark').textContent = d.status === 'routed' ? 'ROUTED' : 'BLOCKED';
+      document.querySelector('#tier').textContent = d.tier || 'NONE';
+      document.querySelector('#status').textContent = d.status.replaceAll('_', ' ');
+      document.querySelector('#status').className = 'badge' + (d.status === 'routed' ? '' : ' error');
+      document.querySelector('#source').textContent = d.decision_source;
+      document.querySelector('#model').textContent = d.model_id || 'No eligible model';
+      document.querySelector('#policy').textContent = d.policy_version;
+      document.querySelector('#confidence').textContent = d.confidence == null ? 'Rule based' : `${Math.round(d.confidence * 100)}%`;
+      document.querySelector('#thresholds').textContent = `${data.thresholds.medium} / ${data.thresholds.high} / ${data.thresholds.max}`;
+      document.querySelector('#score-label').textContent = d.rule_score == null ? 'Rule score bypassed' : `Rule score ${d.rule_score}`;
+      const score = d.rule_score == null ? 0 : Math.min(d.rule_score, data.thresholds.max + 3);
+      const limit = data.thresholds.max + 3;
+      document.querySelector('#needle').style.left = `calc(${Math.max(1, score / limit * 100)}% - 2px)`;
+      document.querySelector('#reasons').innerHTML = d.reason_codes.map(code => `<div class="reason"><span><strong>${escapeHtml(code)}</strong><br>${escapeHtml(labels[code] || code.toLowerCase().replaceAll('_', ' '))}</span></div>`).join('');
+    }
+
+    function escapeHtml(value) {
+      const node = document.createElement('span'); node.textContent = value; return node.innerHTML;
+    }
+  </script>
+</body>
+</html>

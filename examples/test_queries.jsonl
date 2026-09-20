@@ -1,0 +1,22 @@
+{"case_id":"fast-extract-date","query":"Extract the invoice date","task_type":"extraction","risk":"standard","expected_status":"routed","expected_tier":"fast"}
+{"case_id":"fast-sentiment","query":"Classify this review as positive or negative","task_type":"classification","risk":"standard","expected_status":"routed","expected_tier":"fast"}
+{"case_id":"fast-translate","query":"Translate hello to Spanish","task_type":"general","risk":"standard","expected_status":"routed","expected_tier":"fast"}
+{"case_id":"fast-short-writing","query":"Write a three-word greeting","task_type":"writing","risk":"low","expected_status":"routed","expected_tier":"fast"}
+{"case_id":"medium-comparison","query":"Compare OAuth and API keys for a small internal tool","task_type":"analysis","risk":"standard","expected_status":"routed","expected_tier":"medium"}
+{"case_id":"medium-retry-design","query":"Design a retry strategy for one HTTP client","task_type":"general","risk":"standard","expected_status":"routed","expected_tier":"medium"}
+{"case_id":"medium-function-debug","query":"Debug this function and explain why it returns None","task_type":"coding","risk":"standard","expected_status":"routed","expected_tier":"medium"}
+{"case_id":"medium-caching","query":"Evaluate the trade-offs between two caching options","task_type":"analysis","risk":"standard","expected_status":"routed","expected_tier":"medium"}
+{"case_id":"medium-multi-step-writing","query":"Write a launch email, then rewrite it in a formal tone","task_type":"writing","risk":"standard","expected_status":"routed","expected_tier":"medium"}
+{"case_id":"high-deadlock","query":"Investigate this deadlock across three services and identify the root cause","task_type":"coding","risk":"standard","expected_status":"routed","expected_tier":"high"}
+{"case_id":"high-security-analysis","query":"Analyze a security vulnerability in this authentication flow","task_type":"analysis","risk":"standard","expected_status":"routed","expected_tier":"high"}
+{"case_id":"high-cross-file-debug","query":"Debug failures across several files","task_type":"coding","risk":"standard","expected_status":"routed","expected_tier":"high"}
+{"case_id":"high-distributed-design","query":"Design a distributed system spanning three services","task_type":"analysis","risk":"standard","expected_status":"routed","expected_tier":"high"}
+{"case_id":"max-critical-migration","query":"Design an architecture migration across multiple distributed systems","task_type":"analysis","risk":"critical","expected_status":"routed","expected_tier":"max"}
+{"case_id":"max-critical-race","query":"Investigate a race condition across five services","task_type":"coding","risk":"critical","expected_status":"routed","expected_tier":"max"}
+{"case_id":"max-high-risk-security","query":"Evaluate security vulnerabilities across multiple systems","task_type":"analysis","risk":"high","expected_status":"routed","expected_tier":"max"}
+{"case_id":"max-critical-proof","query":"Create a formal proof for an optimization problem across three components","task_type":"math","risk":"critical","expected_status":"routed","expected_tier":"max"}
+{"case_id":"query-vision-inference","query":"Describe the attached image","task_type":"general","risk":"standard","expected_status":"routed","expected_tier":"high"}
+{"case_id":"query-audio-inference","query":"Transcribe this recording","task_type":"general","risk":"standard","expected_status":"routed","expected_tier":"max"}
+{"case_id":"constraint-large-context","query":"Summarize the supplied corpus","task_type":"summarization","risk":"standard","required_context_window":200000,"expected_status":"routed","expected_tier":"max"}
+{"case_id":"constraint-unsatisfied-audio","query":"Transcribe this recording","task_type":"general","risk":"standard","required_capabilities":["audio"],"allowed_tiers":["fast","medium","high"],"expected_status":"unsatisfied_constraints","expected_tier":null}
+{"case_id":"override-medium","query":"Investigate a distributed deadlock","task_type":"coding","risk":"critical","tier_override":"medium","expected_status":"routed","expected_tier":"medium"}
