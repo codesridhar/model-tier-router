@@ -94,11 +94,26 @@ capability and context constraint. If none qualifies, the router returns
 `tier_override` is exact and has precedence over automatic routing. Treat it as privileged input;
 never expose it through a public API without separate authorization.
 
-## Trained local NLP classifier
+## Local NLP classifier
 
-The `nlp` extra includes a TF-IDF and balanced logistic-regression baseline. Train it on reviewed
-examples from your workload where each label represents the lowest tier that passed your quality
-criteria:
+The `nlp` extra includes a TF-IDF and balanced logistic-regression classifier with a versioned,
+generic dataset bundled in the package. It works without caller-provided training data:
+
+```python
+from model_router import RouteRequest, Router, RoutingPolicy
+from model_router.classifiers import TfidfClassifier
+
+classifier = TfidfClassifier()
+router = Router(
+    classifier=classifier,
+    policy=RoutingPolicy(classifier_min_score=0, classifier_max_score=8),
+)
+decision = router.route(RouteRequest(query="Find why these services lock each other"))
+```
+
+The bundled data is a safe starting point, not a claim that generic labels match every model
+catalog. Add reviewed examples from your workload; each label should represent the lowest tier
+that passed your quality criteria. Additional examples are combined with the bundled data:
 
 ```python
 from model_router import RouteRequest, Router, RoutingPolicy, TaskType, Tier
@@ -123,12 +138,18 @@ examples = [
     TrainingExample(query="Prove this optimization theorem", tier=Tier.MAX),
 ]
 
-classifier = TfidfClassifier(examples)
+classifier = TfidfClassifier(examples)  # bundled examples + application examples
 router = Router(
     classifier=classifier,
     policy=RoutingPolicy(classifier_min_score=0, classifier_max_score=8),
 )
 decision = router.route(RouteRequest(query="Find why these services lock each other"))
+```
+
+To train only on application data, disable the bundled examples explicitly:
+
+```python
+classifier = TfidfClassifier(examples, include_default_examples=False)
 ```
 
 By default, classifier output may raise but cannot lower the heuristic tier. Adapter failure uses

@@ -5,6 +5,6 @@ Pydantic dependency. Import an implementation explicitly after installing its co
 extra.
 """
 
-from .sklearn import TfidfClassifier, TrainingExample
+from .sklearn import TfidfClassifier, TrainingExample, default_training_examples
 
-__all__ = ["TfidfClassifier", "TrainingExample"]
+__all__ = ["TfidfClassifier", "TrainingExample", "default_training_examples"]

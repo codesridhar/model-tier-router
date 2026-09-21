@@ -46,7 +46,7 @@ model-router-demo = "model_router.demo_cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-model_router = ["static/*.html"]
+model_router = ["data/*.jsonl", "static/*.html"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

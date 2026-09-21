@@ -1,12 +1,15 @@
 """Trainable text classifier backed by scikit-learn.
 
-Install with ``pip install 'model-tier-router[nlp]'``. This classifier is intentionally trained
-by the consuming application because tier boundaries depend on its models and quality criteria.
+Install with ``pip install 'model-tier-router[nlp]'``. The classifier works out of the box with a
+small, generic dataset bundled in the package. Consuming applications can extend or replace that
+dataset because tier boundaries ultimately depend on their models and quality criteria.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable
+from functools import lru_cache
+from importlib.resources import files
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -34,16 +37,46 @@ class TrainingExample(BaseModel):
     risk: RiskLevel = RiskLevel.STANDARD
 
 
+@lru_cache(maxsize=1)
+def default_training_examples() -> tuple[TrainingExample, ...]:
+    """Load the versioned generic examples distributed with the package.
+
+    The returned models are immutable, and the resource is parsed only once per process.
+    """
+
+    resource = files("model_router").joinpath("data/default_training_data.jsonl")
+    lines = resource.read_text(encoding="utf-8").splitlines()
+    return tuple(
+        TrainingExample.model_validate_json(line)
+        for line in lines
+        if line.strip() and not line.lstrip().startswith("#")
+    )
+
+
 class TfidfClassifier:
-    """A deterministic, local baseline classifier trained on application examples.
+    """A deterministic, local baseline classifier with bundled generic examples.
 
     The implementation uses word and phrase features with balanced logistic regression. It makes
     no network calls and is safe to share between threads after training. Retraining should create
     a new instance and replace it atomically in the host application.
     """
 
-    def __init__(self, examples: Iterable[TrainingExample]) -> None:
-        training_examples = tuple(examples)
+    def __init__(
+        self,
+        examples: Iterable[TrainingExample] | None = None,
+        *,
+        include_default_examples: bool = True,
+    ) -> None:
+        """Train a classifier from bundled data and optional application examples.
+
+        With no arguments, the bundled generic dataset is used. Supplied examples extend that
+        dataset by default. Set ``include_default_examples=False`` to train exclusively on the
+        supplied examples.
+        """
+
+        additional_examples = tuple(examples or ())
+        bundled_examples = default_training_examples() if include_default_examples else ()
+        training_examples = (*bundled_examples, *additional_examples)
         if len(training_examples) < 4:
             raise ValueError("at least four training examples are required")
         labels = {example.tier.value for example in training_examples}
@@ -77,6 +110,8 @@ class TfidfClassifier:
         ]
         tiers = [example.tier.value for example in training_examples]
         self._pipeline.fit(texts, tiers)
+        self.training_example_count = len(training_examples)
+        self.includes_default_examples = include_default_examples
 
     def classify(self, request: RouteRequest) -> ClassifierResult:
         """Predict a tier and calibrated-like probability for one request.
