@@ -1,0 +1,60 @@
+{"query":"Extract the invoice number","tier":"fast","task_type":"extraction","risk":"low"}
+{"query":"Identify the date in this sentence","tier":"fast","task_type":"extraction","risk":"low"}
+{"query":"Classify this review as positive or negative","tier":"fast","task_type":"classification","risk":"low"}
+{"query":"Translate hello into Spanish","tier":"fast","task_type":"general","risk":"low"}
+{"query":"Correct the spelling in this sentence","tier":"fast","task_type":"writing","risk":"low"}
+{"query":"Return the customer name from this record","tier":"fast","task_type":"extraction","risk":"standard"}
+{"query":"Answer this simple factual question","tier":"fast","task_type":"general","risk":"low"}
+{"query":"Write a three word greeting","tier":"fast","task_type":"writing","risk":"low"}
+{"query":"Convert this title to lowercase","tier":"fast","task_type":"general","risk":"low"}
+{"query":"Detect the language of this paragraph","tier":"fast","task_type":"classification","risk":"low"}
+{"query":"Label this support ticket by topic","tier":"fast","task_type":"classification","risk":"standard"}
+{"query":"List the email addresses in this text","tier":"fast","task_type":"extraction","risk":"standard"}
+{"query":"Format this date as ISO 8601","tier":"fast","task_type":"general","risk":"low"}
+{"query":"Fix the typo in this heading","tier":"fast","task_type":"writing","risk":"low"}
+{"query":"Determine whether this value is present","tier":"fast","task_type":"classification","risk":"low"}
+{"query":"Summarize this short customer message","tier":"medium","task_type":"summarization","risk":"standard"}
+{"query":"Write a professional customer email","tier":"medium","task_type":"writing","risk":"standard"}
+{"query":"Compare these two product options","tier":"medium","task_type":"analysis","risk":"standard"}
+{"query":"Explain why this function returns none","tier":"medium","task_type":"coding","risk":"standard"}
+{"query":"Design a retry strategy for one HTTP client","tier":"medium","task_type":"coding","risk":"standard"}
+{"query":"Evaluate the tradeoffs between two cache policies","tier":"medium","task_type":"analysis","risk":"standard"}
+{"query":"Rewrite this announcement in a formal tone","tier":"medium","task_type":"writing","risk":"standard"}
+{"query":"Create a unit test for this small function","tier":"medium","task_type":"coding","risk":"standard"}
+{"query":"Summarize the main arguments in this article","tier":"medium","task_type":"summarization","risk":"standard"}
+{"query":"Propose three names and explain each choice","tier":"medium","task_type":"writing","risk":"standard"}
+{"query":"Analyze this table and describe the trend","tier":"medium","task_type":"analysis","risk":"standard"}
+{"query":"Refactor this class without changing behavior","tier":"medium","task_type":"coding","risk":"standard"}
+{"query":"Solve this routine algebra problem step by step","tier":"medium","task_type":"math","risk":"standard"}
+{"query":"Draft a short implementation plan for one service","tier":"medium","task_type":"general","risk":"standard"}
+{"query":"Compare OAuth and API keys for an internal tool","tier":"medium","task_type":"analysis","risk":"standard"}
+{"query":"Investigate a deadlock across three services","tier":"high","task_type":"coding","risk":"standard"}
+{"query":"Debug inconsistent behavior across several files","tier":"high","task_type":"coding","risk":"standard"}
+{"query":"Review this system architecture for scalability risks","tier":"high","task_type":"analysis","risk":"standard"}
+{"query":"Analyze a security vulnerability in this authentication flow","tier":"high","task_type":"analysis","risk":"high"}
+{"query":"Design a distributed system spanning several services","tier":"high","task_type":"analysis","risk":"standard"}
+{"query":"Find the root cause of intermittent production failures","tier":"high","task_type":"coding","risk":"high"}
+{"query":"Evaluate a database redesign with interacting constraints","tier":"high","task_type":"analysis","risk":"standard"}
+{"query":"Create an end to end migration plan for three components","tier":"high","task_type":"general","risk":"standard"}
+{"query":"Optimize this concurrent algorithm and justify correctness","tier":"high","task_type":"coding","risk":"standard"}
+{"query":"Analyze conflicting requirements across multiple teams","tier":"high","task_type":"analysis","risk":"standard"}
+{"query":"Diagnose a race condition in this event pipeline","tier":"high","task_type":"coding","risk":"high"}
+{"query":"Develop a detailed strategy using several data sources","tier":"high","task_type":"analysis","risk":"standard"}
+{"query":"Review a complex pull request across many modules","tier":"high","task_type":"coding","risk":"standard"}
+{"query":"Model the failure modes of this distributed workflow","tier":"high","task_type":"analysis","risk":"high"}
+{"query":"Reconcile contradictory evidence and recommend an approach","tier":"high","task_type":"analysis","risk":"standard"}
+{"query":"Plan a critical multi region database migration","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Prove this difficult optimization theorem formally","tier":"max","task_type":"math","risk":"critical"}
+{"query":"Design disaster recovery across multiple distributed systems","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Investigate a critical race condition across five services","tier":"max","task_type":"coding","risk":"critical"}
+{"query":"Evaluate security vulnerabilities across the entire platform","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Create a formal proof for a novel optimization algorithm","tier":"max","task_type":"math","risk":"critical"}
+{"query":"Plan an irreversible architecture migration with zero downtime","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Diagnose a company wide outage with conflicting telemetry","tier":"max","task_type":"coding","risk":"critical"}
+{"query":"Design a safety critical control system and threat model","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Develop a global data consistency strategy under partitions","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Audit the complete platform for systemic security weaknesses","tier":"max","task_type":"analysis","risk":"critical"}
+{"query":"Optimize a large distributed system under strict constraints","tier":"max","task_type":"math","risk":"critical"}
+{"query":"Create a multi year transformation plan across all systems","tier":"max","task_type":"general","risk":"critical"}
+{"query":"Determine the root cause of cascading failures across regions","tier":"max","task_type":"coding","risk":"critical"}
+{"query":"Formally verify a critical concurrent protocol","tier":"max","task_type":"math","risk":"critical"}
